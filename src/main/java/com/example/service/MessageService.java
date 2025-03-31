@@ -48,6 +48,7 @@ public class MessageService {
     }
 
     public Integer deleteMessageById(Integer messageId){
+        //checks if message is there
         if(!messageRepository.existsById(messageId)){
             return 0;
         }
@@ -55,4 +56,35 @@ public class MessageService {
         messageRepository.deleteById(messageId);
         return 1;
     }
+
+    public Integer updateMessageById(Integer messageId, String updatedMessage){
+
+        System.out.println("this is ther mesage: "+updatedMessage + " "+ updatedMessage.length());
+        //checks if the updated message is valid
+        if(updatedMessage.length()>255 || updatedMessage == null || updatedMessage.isEmpty()){
+            return 0;
+        }
+        //checks if the messa_id exists
+        if(!messageRepository.existsById(messageId)){
+            return 0;
+        }
+
+        System.out.println("Passed Error checking: "+ updatedMessage);
+        //create a updated message
+        Message message = messageRepository.getById(messageId);
+
+        //update the message text
+        message.setMessageText(updatedMessage);
+
+        //update the repository
+        messageRepository.save(message);
+
+        return 1;
+    }
+
+    public List<Message> getAllMessagesById(Integer account_id){
+        return messageRepository.findByPostedBy(account_id);
+    }
+
+
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -90,7 +91,7 @@ public class SocialMediaController {
         return ResponseEntity.status(200).body(messages);
     }
 
-    @GetMapping("/messages/{messageId}")
+    @GetMapping("/messages/{message_id}")
     public ResponseEntity getMessageByMessageId(@PathVariable Integer messageId){
         Optional<Message> message = messageService.getMessageByMessageId(messageId);
 
@@ -102,7 +103,7 @@ public class SocialMediaController {
         return ResponseEntity.status(200).body(message);
     }
 
-    @DeleteMapping("/messages/{messageId}")
+    @DeleteMapping("/messages/{message_id}")
     public ResponseEntity deleteMessageById(@PathVariable Integer messageId){
 
         int rowsUpdated = messageService.deleteMessageById(messageId);
@@ -113,6 +114,24 @@ public class SocialMediaController {
         }
 
         return ResponseEntity.status(200).body(rowsUpdated);
+    }
+
+    @PatchMapping("/messages/{message_id}")
+    public ResponseEntity updateMessageById(@PathVariable Integer messageId, @RequestBody Message newMessage){
+
+        int rowsUpdated = messageService.updateMessageById(messageId, newMessage.getMessageText());
+
+        //if the message failed in any way it will not return 1
+        if(rowsUpdated !=1){
+            return ResponseEntity.status(400).build();
+        }
+        return ResponseEntity.status(200).body(rowsUpdated);
+    }
+
+    @GetMapping("/accounts/{account_id}/messages")
+    public ResponseEntity getAllMessagesFromUserGivenId(@PathVariable Integer account_id){
+        List<Message> messages = messageService.getAllMessagesById(account_id);
+        return ResponseEntity.status(200).body(messages);
     }
 
 }
