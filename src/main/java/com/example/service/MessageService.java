@@ -9,6 +9,7 @@ import com.example.repository.AccountRepository;
 import com.example.repository.MessageRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -39,5 +40,19 @@ public class MessageService {
 
     public List<Message> getAllMessages(){
         return messageRepository.findAll();
+    }
+
+    public Optional<Message> getMessageByMessageId(Integer messageId){
+
+        return messageRepository.findById(messageId);
+    }
+
+    public Integer deleteMessageById(Integer messageId){
+        if(!messageRepository.existsById(messageId)){
+            return 0;
+        }
+
+        messageRepository.deleteById(messageId);
+        return 1;
     }
 }
