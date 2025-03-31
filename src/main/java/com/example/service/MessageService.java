@@ -8,6 +8,8 @@ import com.example.entity.Message;
 import com.example.repository.AccountRepository;
 import com.example.repository.MessageRepository;
 
+import java.util.List;
+
 
 @Service
 public class MessageService {
@@ -33,5 +35,9 @@ public class MessageService {
         messageRepository.save(message);
 
         return message;
+    }
+
+    public List<Message> getAllMessages(){
+        return messageRepository.findAll();
     }
 }

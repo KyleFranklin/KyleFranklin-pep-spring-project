@@ -1,6 +1,9 @@
 package com.example.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.http.ResponseEntity;
@@ -64,7 +67,7 @@ public class SocialMediaController {
     }
 
     @PostMapping("/messages")
-    public ResponseEntity login(@RequestBody Message message){
+    public ResponseEntity createMessge(@RequestBody Message message){
         try {
             Message createdMessage = messageService.createMessage(message);
 
@@ -72,6 +75,12 @@ public class SocialMediaController {
         } catch (InvalidMessageException e) {
             return ResponseEntity.status(400).body(e.getMessage());
         }
+    }
+
+    @GetMapping("/messages")
+    public ResponseEntity getAllMessages(){
+        List<Message> messages = messageService.getAllMessages();
+        return ResponseEntity.status(200).body(messages);
     }
 
 }
