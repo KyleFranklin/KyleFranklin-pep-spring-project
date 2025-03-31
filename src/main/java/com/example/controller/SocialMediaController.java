@@ -92,8 +92,8 @@ public class SocialMediaController {
     }
 
     @GetMapping("/messages/{message_id}")
-    public ResponseEntity getMessageByMessageId(@PathVariable Integer messageId){
-        Optional<Message> message = messageService.getMessageByMessageId(messageId);
+    public ResponseEntity getMessageByMessageId(@PathVariable Integer message_id){
+        Optional<Message> message = messageService.getMessageByMessageId(message_id);
 
         //if the message is empty return a blank response
         if(!message.isPresent()){
@@ -104,9 +104,9 @@ public class SocialMediaController {
     }
 
     @DeleteMapping("/messages/{message_id}")
-    public ResponseEntity deleteMessageById(@PathVariable Integer messageId){
+    public ResponseEntity deleteMessageById(@PathVariable Integer message_id){
 
-        int rowsUpdated = messageService.deleteMessageById(messageId);
+        int rowsUpdated = messageService.deleteMessageById(message_id);
 
         //if the message was not found empty body
         if(rowsUpdated == 0){
@@ -117,9 +117,9 @@ public class SocialMediaController {
     }
 
     @PatchMapping("/messages/{message_id}")
-    public ResponseEntity updateMessageById(@PathVariable Integer messageId, @RequestBody Message newMessage){
+    public ResponseEntity updateMessageById(@PathVariable Integer message_id, @RequestBody Message newMessage){
 
-        int rowsUpdated = messageService.updateMessageById(messageId, newMessage.getMessageText());
+        int rowsUpdated = messageService.updateMessageById(message_id, newMessage.getMessageText());
 
         //if the message failed in any way it will not return 1
         if(rowsUpdated !=1){
