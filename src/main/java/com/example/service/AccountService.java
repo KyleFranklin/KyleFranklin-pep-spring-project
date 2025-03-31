@@ -4,9 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.entity.Account;
+import com.example.exception.InvalidAccountException;
+import com.example.exception.InvalidMessageException;
 import com.example.repository.AccountRepository;
 
-import java.util.Optional;
 
 @Service
 public class AccountService {
@@ -26,23 +27,23 @@ public class AccountService {
     }
 
     //create Account
-    public Integer createAccount(Account account){
+    public Account createAccount(Account account){
 
         //check if the username is taken
         if(accountRepository.existsByUsername(account.getUsername())){
-            return 1;
+            throw new InvalidAccountException("username", "Username already exists.");
         }
 
         //validate password
         if(!validPasword(account.getPassword())){
-            return 2;
+            throw new InvalidAccountException("password", "Password must be atleast 4 characters.");
         }
 
         //update the database
         accountRepository.save(account);
 
         //Account created
-        return 0;
+        return account;
     }
 
     //Validate login

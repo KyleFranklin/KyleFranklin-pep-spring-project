@@ -7,7 +7,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.entity.Account;
+import com.example.entity.Message;
+import com.example.exception.InvalidMessageException;
+import com.example.exception.InvalidAccountException;
 import com.example.service.AccountService;
+import com.example.service.MessageService;
 
 /**
  * TODO: You will need to write your own endpoints and handlers for your controller using Spring. The endpoints you will need can be
@@ -19,32 +23,29 @@ import com.example.service.AccountService;
  @RestController
 public class SocialMediaController {
     private final AccountService accountService;
+    private final MessageService messageService;
 
     @Autowired
-    public SocialMediaController(AccountService accountService){
+    public SocialMediaController(AccountService accountService, MessageService messageService){
         this.accountService = accountService;
+        this.messageService = messageService;
     }
 
     //Creating account logic
     @PostMapping("/register")
     public ResponseEntity createAccount(@RequestBody Account account){
-        try {
-            // 0  = account created, 1 = duplicate user, 2 = password is not long enough
-            Integer accountcreated = accountService.createAccount(account);
+        try { 
+            Account accountcreated = accountService.createAccount(account);
+            return ResponseEntity.status(200).body(accountcreated);
 
-            if(accountcreated==0){
-                return ResponseEntity.status(200).body(account);
+        } catch (InvalidAccountException e) {
+            //specifically thorw error 409 if the username is a duplicate
+            if(e.getErrorType().equals("username")){
+                return ResponseEntity.status(409).body(e.getMessage());
             }
-
-            else if(accountcreated == 1 ){
-                return ResponseEntity.status(409).build();
-            }
-
             else{
-                return ResponseEntity.status(400).build();
+                return ResponseEntity.status(400).body(e.getMessage());
             }
-        } catch (Exception e) {
-            return ResponseEntity.status(400).build();
         }
     }
 
@@ -59,6 +60,17 @@ public class SocialMediaController {
         }
         else{
             return ResponseEntity.status(401).build();
+        }
+    }
+
+    @PostMapping("/messages")
+    public ResponseEntity login(@RequestBody Message message){
+        try {
+            Message createdMessage = messageService.createMessage(message);
+
+            return ResponseEntity.status(200).body(createdMessage);
+        } catch (InvalidMessageException e) {
+            return ResponseEntity.status(400).body(e.getMessage());
         }
     }
 
