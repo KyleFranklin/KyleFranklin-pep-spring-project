@@ -19,7 +19,8 @@ public class AccountService {
 
     //validate password
     public boolean validPasword(String password){
-        if(password.length()<3){
+        //check if pasword is les then 4 characters
+        if(password.length()<4){
             return false;
         }
         return true;
