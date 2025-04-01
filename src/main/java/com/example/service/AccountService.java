@@ -47,26 +47,19 @@ public class AccountService {
 
     //Validate login
     public Account validLogin(Account given){
-        System.out.println("Validating login for account: " + given);
         Account account = accountRepository.findByUsername(given.getUsername());
 
         //account does not exist
         if(account == null){
-            System.out.println("Account not found: " + given);
-            return null;
+            throw new InvalidAccountException("Login", "Account does not exist");
         }
-
-        System.out.println("Account found: " + given);
-
 
         //account passwords do not match
         if(!account.getPassword().equals(given.getPassword())){
-            System.out.println("Passwords do not match for account: " + given.getUsername());
-            return null;
+            throw new InvalidAccountException("Login", "Incorrect Password");
         }
 
         //valid login
-        System.out.println("Valid login for username: " + given.getUsername());
         return account;
     }
 }

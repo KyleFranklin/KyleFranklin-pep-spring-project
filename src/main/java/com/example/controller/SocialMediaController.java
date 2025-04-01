@@ -52,26 +52,28 @@ public class SocialMediaController {
             if(e.getErrorType().equals("username")){
                 return ResponseEntity.status(409).body(e.getMessage());
             }
+            //throw 400 for any othe reason
             else{
                 return ResponseEntity.status(400).body(e.getMessage());
             }
         }
     }
 
+    //Login Logic
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody Account account){
-        //create an account to check if the account has a valid login
-        Account loggedIn = accountService.validLogin(account);
 
-        //if the account is null, it means either the password is incorrect or the username was not found
-        if(loggedIn != null){
+        try {
+            Account loggedIn = accountService.validLogin(account);
             return ResponseEntity.status(200).body(loggedIn);
-        }
-        else{
-            return ResponseEntity.status(401).build();
+            
+        } catch (InvalidAccountException e) {
+            // if there is an invalid message due to constraints throw an error
+            return ResponseEntity.status(401).body(e.getMessage());
         }
     }
-
+    
+    //Create Mesage Logic
     @PostMapping("/messages")
     public ResponseEntity createMessge(@RequestBody Message message){
         try {
@@ -85,18 +87,21 @@ public class SocialMediaController {
         }
     }
 
+    //Get All Messages Logic
     @GetMapping("/messages")
     public ResponseEntity getAllMessages(){
         List<Message> messages = messageService.getAllMessages();
         return ResponseEntity.status(200).body(messages);
     }
 
+
+    //Get Message By Mesasge Id
     @GetMapping("/messages/{message_id}")
     public ResponseEntity getMessageByMessageId(@PathVariable Integer message_id){
-        Optional<Message> message = messageService.getMessageByMessageId(message_id);
+        Message message = messageService.getMessageByMessageId(message_id);
 
         //if the message is empty return a blank response
-        if(!message.isPresent()){
+        if(message == null){
             return ResponseEntity.status(200).build();
         }
 
@@ -118,14 +123,15 @@ public class SocialMediaController {
 
     @PatchMapping("/messages/{message_id}")
     public ResponseEntity updateMessageById(@PathVariable Integer message_id, @RequestBody Message newMessage){
-
-        int rowsUpdated = messageService.updateMessageById(message_id, newMessage.getMessageText());
-
-        //if the message failed in any way it will not return 1
-        if(rowsUpdated !=1){
-            return ResponseEntity.status(400).build();
+        try {
+            int rowsUpdated = messageService.updateMessageById(message_id, newMessage.getMessageText());
+            return ResponseEntity.status(200).body(rowsUpdated);
+            
+        } catch (InvalidMessageException e) {
+            // if there is an invalid message due to constraints throw an error
+            return ResponseEntity.status(400).body(e.getMessage());
         }
-        return ResponseEntity.status(200).body(rowsUpdated);
+
     }
 
     @GetMapping("/accounts/{account_id}/messages")

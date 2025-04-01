@@ -25,12 +25,14 @@ public class MessageService {
     }
 
     public Message createMessage(Message message){
+        //Checks if its a valid message
         if(message.getMessageText().length()>255 || message.getMessageText() == null || message.getMessageText().trim().isEmpty()){
-            throw new InvalidMessageException("Invalid Message");
+            throw new InvalidMessageException("Message","Invalid Message");
         }
 
-        if(message.getPostedBy()== null || !(accountRepository.existsById(message.getPostedBy()))){
-            throw new InvalidMessageException("Invalid Message");
+        //Checks if its a valid Id
+        if(message.getPostedBy() == null || !(accountRepository.existsById(message.getPostedBy()))){
+            throw new InvalidMessageException("Message","Id does not exist");
         }
 
         messageRepository.save(message);
@@ -42,36 +44,37 @@ public class MessageService {
         return messageRepository.findAll();
     }
 
-    public Optional<Message> getMessageByMessageId(Integer messageId){
-
-        return messageRepository.findById(messageId);
+    public Message getMessageByMessageId(Integer message_id){
+        Optional<Message> message = messageRepository.findById(message_id);
+        //Check if the message exists
+        if(message.isPresent()){
+            return message.get();
+        }
+        return null;
     }
 
-    public Integer deleteMessageById(Integer messageId){
-        //checks if message is there
-        if(!messageRepository.existsById(messageId)){
+    public Integer deleteMessageById(Integer message_id){
+        //Check if the message exists
+        if(!messageRepository.existsById(message_id)){
             return 0;
         }
 
-        messageRepository.deleteById(messageId);
+        messageRepository.deleteById(message_id);
+
         return 1;
     }
 
-    public Integer updateMessageById(Integer messageId, String updatedMessage){
-
-        System.out.println("this is ther mesage: "+updatedMessage + " "+ updatedMessage.length());
+    public Integer updateMessageById(Integer message_id, String updatedMessage){
         //checks if the updated message is valid
         if(updatedMessage.length()>255 || updatedMessage == null || updatedMessage.isEmpty()){
-            return 0;
+            throw new InvalidMessageException("Message","Invalid Message");
         }
-        //checks if the messa_id exists
-        if(!messageRepository.existsById(messageId)){
-            return 0;
+        //checks if there is a message to update
+        if(!messageRepository.existsById(message_id)){
+            throw new InvalidMessageException("Message","Incorrect message Id");
         }
-
-        System.out.println("Passed Error checking: "+ updatedMessage);
         //create a updated message
-        Message message = messageRepository.getById(messageId);
+        Message message = messageRepository.getById(message_id);
 
         //update the message text
         message.setMessageText(updatedMessage);
