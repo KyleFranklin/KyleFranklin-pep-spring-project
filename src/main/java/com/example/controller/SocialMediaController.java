@@ -95,7 +95,7 @@ public class SocialMediaController {
     }
 
 
-    //Get Message By Mesasge Id
+    //Get Message By Mesasge Id logic
     @GetMapping("/messages/{message_id}")
     public ResponseEntity getMessageByMessageId(@PathVariable Integer message_id){
         Message message = messageService.getMessageByMessageId(message_id);
@@ -108,6 +108,7 @@ public class SocialMediaController {
         return ResponseEntity.status(200).body(message);
     }
 
+    //Deleteing message By message Id logic
     @DeleteMapping("/messages/{message_id}")
     public ResponseEntity deleteMessageById(@PathVariable Integer message_id){
 
@@ -121,6 +122,7 @@ public class SocialMediaController {
         return ResponseEntity.status(200).body(rowsUpdated);
     }
 
+    //Updating messages By Id logic
     @PatchMapping("/messages/{message_id}")
     public ResponseEntity updateMessageById(@PathVariable Integer message_id, @RequestBody Message newMessage){
         try {
@@ -134,6 +136,7 @@ public class SocialMediaController {
 
     }
 
+    //Get All message by a specified accunt Id logic
     @GetMapping("/accounts/{account_id}/messages")
     public ResponseEntity getAllMessagesFromUserGivenId(@PathVariable Integer account_id){
         List<Message> messages = messageService.getAllMessagesById(account_id);
